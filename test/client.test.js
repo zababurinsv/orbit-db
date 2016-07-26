@@ -38,28 +38,28 @@ const IpfsApis = [
   stop: () => Promise.resolve()
   // stop: () => new Promise((resolve, reject) => ipfs.goOffline(resolve))
 },
-{
-  // js-ipfs-api via local daemon
-  name: 'js-ipfs-api',
-  start: () => {
-    return new Promise((resolve, reject) => {
-      ipfsd.disposableApi((err, ipfs) => {
-        if(err) reject(err);
-        resolve(ipfs);
-      });
-      // ipfsd.local((err, node) => {
-      //   if(err) reject(err);
-      //   ipfsDaemon = node;
-      //   ipfsDaemon.startDaemon((err, ipfs) => {
-      //     if(err) reject(err);
-      //     resolve(ipfs);
-      //   });
-      // });
-    });
-  },
-  stop: () => Promise.resolve()
-  // stop: () => new Promise((resolve, reject) => ipfsDaemon.stopDaemon(resolve))
-}
+// {
+//   // js-ipfs-api via local daemon
+//   name: 'js-ipfs-api',
+//   start: () => {
+//     return new Promise((resolve, reject) => {
+//       ipfsd.disposableApi((err, ipfs) => {
+//         if(err) reject(err);
+//         resolve(ipfs);
+//       });
+//       // ipfsd.local((err, node) => {
+//       //   if(err) reject(err);
+//       //   ipfsDaemon = node;
+//       //   ipfsDaemon.startDaemon((err, ipfs) => {
+//       //     if(err) reject(err);
+//       //     resolve(ipfs);
+//       //   });
+//       // });
+//     });
+//   },
+//   stop: () => Promise.resolve()
+//   // stop: () => new Promise((resolve, reject) => ipfsDaemon.stopDaemon(resolve))
+// }
 ];
 
 OrbitServer.start();
@@ -67,7 +67,8 @@ OrbitServer.start();
 IpfsApis.forEach(function(ipfsApi) {
 
   describe('Orbit Client with ' + ipfsApi.name, function() {
-    this.timeout(40000);
+    this.timeout(4000);
+    // this.timeout(40000);
 
     let client, client2, db;
     let channel = 'abcdefghijklmn';
@@ -682,6 +683,78 @@ IpfsApis.forEach(function(ipfsApi) {
         await(db2.put('key1', 'hello2'));
       }));
     });
+
+    describe('Array Store', function() {
+      beforeEach(async((done) => {
+        db = await(client.array(channel, { subscribe: false }));
+        db.delete();
+        done();
+      }));
+
+      afterEach((done) => {
+        db.delete();
+        client.events.on('closed', (dbname) => {
+          client.events.removeAllListeners('closed')
+          done()
+        });
+        db.close();
+      });
+
+      it.only('insert', async((done) => {
+        await(db.insert(0, 'a'));
+        const value = db.toString();
+        assert.equal(value, 'a');
+        done();
+      }));
+
+      it.only('insert 2', async((done) => {
+        await(db.insert(0, 'a'));
+        await(db.insert(0, 'b'));
+        const value = db.toString();
+        assert.equal(value, 'ba');
+        done();
+      }));
+
+      it.only('insert 3', async((done) => {
+        await(db.insert(0, 'c'));
+        await(db.insert(0, 'a'));
+        await(db.insert(1, 'b'));
+        const value = db.toString();
+        assert.equal(value, 'abc');
+        done();
+      }));
+
+      it.only('insert 4', async((done) => {
+        await(db.insert(0, 'a'));
+        await(db.insert(1, 'b'));
+        await(db.insert(2, 'c'));
+        const value = db.toString();
+        assert.equal(value, 'abc');
+        done();
+      }));
+
+      it.only('syncs array stores', async((done) => {
+        await(db.insert(0, 'c'));
+        await(db.insert(0, 'a'));
+        await(db.insert(1, 'b'));
+
+        const db2 = await(client2.array(channel, { subscribe: false }));
+        await(db2.insert(0, 'a'));
+        await(db2.insert(1, 'b'));
+        await(db2.insert(2, 'c'));
+
+        db.events.on('updated', (dbname, items) => {
+          const value = db.toString();
+          assert.equal(value, 'aabbcc');
+          done();
+        });
+
+        const hash = await(db2.toIpfsHash())
+        await(db.sync(hash))
+      }));
+
+    });
+
   });
 
 });

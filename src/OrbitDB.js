@@ -7,6 +7,7 @@ const EventStore    = require('orbit-db-eventstore');
 const FeedStore     = require('orbit-db-feedstore');
 const KeyValueStore = require('orbit-db-kvstore');
 const CounterStore  = require('orbit-db-counterstore');
+const ArrayStore    = require('./ArrayStore');
 const PubSub        = require('./PubSub');
 
 class OrbitDB {
@@ -34,6 +35,10 @@ class OrbitDB {
 
   counter(dbname, options) {
     return this._createStore(CounterStore, dbname, options);
+  }
+
+  array(dbname, options) {
+    return this._createStore(ArrayStore, dbname, options);
   }
 
   disconnect() {
@@ -94,6 +99,7 @@ class OrbitDB {
     if(!hash) throw new Error("Hash can't be null!");
     if(this._pubsub) this._pubsub.publish(dbname, hash);
     this.events.emit('data', dbname, hash);
+    // console.log(this.events)
   }
 
   _onSync(dbname) {
