@@ -6,6 +6,7 @@ const FeedStore = require('orbit-db-feedstore')
 const KeyValueStore = require('orbit-db-kvstore')
 const CounterStore = require('orbit-db-counterstore')
 const DocumentStore = require('orbit-db-docstore')
+const ChannelStore = require('../../orbit-db-channelstore/src/ChannelStore')
 const Pubsub = require('orbit-db-pubsub')
 const Cache = require('orbit-db-cache')
 const Keystore = require('orbit-db-keystore')
@@ -16,7 +17,7 @@ const Logger = require('logplease')
 const logger = Logger.create("orbit-db")
 Logger.setLogLevel('NONE')
 
-const validTypes = ['eventlog', 'feed', 'docstore', 'counter', 'keyvalue']
+const validTypes = ['eventlog', 'feed', 'docstore', 'counter', 'keyvalue', 'channel']
 
 class OrbitDB {
   constructor(ipfs, directory, options = {}) {
@@ -68,6 +69,11 @@ class OrbitDB {
 
   async docstore (address, options = {}) {
     return this.docs(address, options)
+  }
+
+  async channel (address, options = {}) {
+    options = Object.assign({ create: true, type: 'channel' }, options)
+    return this.open(address, options)
   }
 
   async disconnect () {
@@ -341,6 +347,8 @@ class OrbitDB {
       return this._createStore(DocumentStore, address, options)
     else if (type === 'keyvalue')
       return this._createStore(KeyValueStore, address, options)
+    else if (type === 'channel')
+      return this._createStore(ChannelStore, address, options)
     else
       throw new Error(`Invalid database type '${type}'`)
   }
