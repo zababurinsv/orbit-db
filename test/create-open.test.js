@@ -5,6 +5,8 @@ const fs = require('fs')
 const path = require('path')
 const rmrf = require('rimraf')
 const mapSeries = require('p-map-series')
+const levelup = require('levelup')
+const leveldown = require('leveldown')
 const OrbitDB = require('../src/OrbitDB')
 const OrbitDBAddress = require('../src/orbit-db-address')
 const config = require('./utils/config')
@@ -83,7 +85,7 @@ describe('orbit-db - Create & Open', function() {
     describe('Success', function() {
       before(async () => {
         db = await orbitdb.create('second', 'feed')
-        localDataPath = path.join(dbPath, db.address.root, db.address.path + '.orbitdb')
+        localDataPath = path.join(dbPath, db.address.root, db.address.path)
       })
 
       it('creates a feed database', async () => {
@@ -97,14 +99,28 @@ describe('orbit-db - Create & Open', function() {
       })
 
       it('saves the database locally', async () => {
+        console.log(localDataPath)
         assert.equal(fs.existsSync(localDataPath), true)
       })
 
       it('saves database manifest reference locally', async () => {
-        const buffer = JSON.parse(fs.readFileSync(localDataPath))
-        const data = buffer[db.address.toString()]
-        assert.equal(data.manifest, db.address.root)
-        assert.equal(db.address.path, 'second')
+        levelup(leveldown(localDataPath), (err, db) => {
+          if (err) {
+            assert.equal(err, null)
+          }
+
+          this._store = db
+
+          this._store.get(db.address.toString(), (err, value) => {
+            if (err) {
+              assert.equal(err, null)
+            }
+
+            const data = JSON.parse(value || '{}')
+            assert.equal(data.manifest, db.address.root)
+            assert.equal(db.address.path, 'second')
+          })
+        })
       })
 
       it('saves database manifest file locally', async () => {
@@ -120,7 +136,7 @@ describe('orbit-db - Create & Open', function() {
       it('can pass local database directory as an option', async () => {
         const dir = './orbitdb/tests/another-feed'
         db = await orbitdb.create('third', 'feed', { directory: dir })
-        localDataPath = path.join(dir, db.address.root, db.address.path + '.orbitdb')
+        localDataPath = path.join(dir, db.address.root, db.address.path)
         assert.equal(fs.existsSync(localDataPath), true)
       })
 
