@@ -1,6 +1,7 @@
 'use strict'
 
 const assert = require('assert')
+const path = require('path')
 const rmrf = require('rimraf')
 const OrbitDB = require('../src/OrbitDB')
 const config = require('./utils/config')
@@ -52,8 +53,8 @@ const databases = [
   },
 ]
 
-describe('orbit-db - Write Permissions', function() {
-  this.timeout(20000)
+describe.only('orbit-db - Write Permissions', function() {
+  this.timeout(10000)
 
   let ipfs, orbitdb1, orbitdb2
 
@@ -62,8 +63,15 @@ describe('orbit-db - Write Permissions', function() {
     rmrf.sync(config.daemon1.repo)
     rmrf.sync(dbPath)
     ipfs = await startIpfs(config.daemon1)
-    orbitdb1 = new OrbitDB(ipfs, dbPath + '/1')
-    orbitdb2 = new OrbitDB(ipfs, dbPath + '/2')
+
+    const Keystore = require('orbit-db-keystore')
+    const id = ipfs._peerInfo.id._idB58String
+    const keystore = new Keystore(path.join(dbPath, id, '/keystore'))
+    const key = await keystore.getKey(id) || await keystore.createKey(id)
+console.log(key)
+
+    orbitdb1 = new OrbitDB(ipfs, dbPath + '/1', { keystore: keystore, key: key })
+    orbitdb2 = new OrbitDB(ipfs, dbPath + '/2', { keystore: keystore, key: key })
   })
 
   after(async () => {

@@ -29,8 +29,12 @@ class OrbitDB {
     this.stores = {}
     this.types = validTypes
     this.directory = directory || './orbitdb'
-    this.keystore = new Keystore(path.join(this.directory, this.id, '/keystore'))
-    this.key = this.keystore.getKey(this.id) || this.keystore.createKey(this.id)
+    this.keystore = options && options.keystore
+      ? options.keystore
+      : new Keystore(path.join(this.directory, this.id, '/keystore'))
+    this.key = options && options.key
+      ? options.key
+      : this.keystore.getKey(this.id) || this.keystore.createKey(this.id)
   }
 
   /* Databases */
@@ -108,6 +112,7 @@ class OrbitDB {
       accessController: accessController, 
       keystore: this.keystore,
       cache: cache,
+      key: this.key,
     })
 
     const store = new Store(this._ipfs, this.id, address, opts)

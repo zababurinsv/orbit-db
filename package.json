@@ -23,7 +23,7 @@
     "orbit-db-docstore": "~1.0.1",
     "orbit-db-eventstore": "~1.0.0",
     "orbit-db-feedstore": "~1.0.0",
-    "orbit-db-keystore": "~0.0.2",
+    "orbit-db-keystore": "orbitdb/orbit-db-keystore#feat/use-libp2p-crypto",
     "orbit-db-kvstore": "~1.0.0",
     "orbit-db-pubsub": "~0.3.6",
     "orbit-db-store": "orbitdb/orbit-db-store#feat/leveldb"

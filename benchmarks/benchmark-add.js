@@ -4,6 +4,7 @@ const IPFS = require('ipfs')
 const IPFSRepo = require('ipfs-repo')
 const DatastoreLevel = require('datastore-level')
 const OrbitDB = require('../src/OrbitDB')
+const path = require('path')
 
 // Metrics
 let totalQueries = 0
@@ -43,7 +44,12 @@ ipfs.on('error', (err) => console.error(err))
 
 ipfs.on('ready', async () => {
   try {
-    const orbit = new OrbitDB(ipfs, './orbitdb/benchmarks')
+    // Create a Keystore and generate a key to use as our identity
+    const Keystore = require('orbit-db-keystore')
+    const id = ipfs._peerInfo.id._idB58String
+    const keystore = new Keystore(path.join('./orbitdb/benchmarks', id, '/keystore'))
+    const key = await keystore.getKey(id) || await keystore.createKey(id)
+    const orbit = new OrbitDB(ipfs, './orbitdb/benchmarks', { keystore: keystore, key: key })
     const db = await orbit.eventlog('orbit-db.benchmark', { 
       replicate: false,
     })
