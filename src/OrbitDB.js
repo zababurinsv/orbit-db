@@ -128,7 +128,8 @@ class OrbitDB {
         this,
         this._ipfs,
         this.contractAPI,
-        this.key.getPublic('hex')
+        this.key,
+        this.keystore,
       );
         logger.debug(`AccessController loaded for ${address}:\n${JSON.stringify(accessController.capabilities, null, 2)}`)
     }
@@ -138,7 +139,7 @@ class OrbitDB {
     const opts = Object.assign({ replicate: true }, options, {
       accessController: accessController,
       keystore: this.keystore,
-      key: this.key.getPublic('hex'),
+      key: this.key,
       cache: cache,
       onClose: this._onClose.bind(this),
     })
@@ -245,7 +246,8 @@ class OrbitDB {
       orbitdb: this,
       ipfs: this._ipfs,
       contractAPI: this.contractAPI,
-      key: this.key.getPublic('hex')
+      key: this.key,
+      keystore: this.keystore,
     };
     if (options.accessController) {
       controllerOptions = Object.assign(
