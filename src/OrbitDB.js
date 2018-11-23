@@ -389,7 +389,6 @@ let databaseTypes = {
   }
 
   static addDatabaseType (type, store) {
-    if (databaseTypes[type]) throw new Error(`Type already exists: ${type}`)
     databaseTypes[type] = store
   }
 
