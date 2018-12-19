@@ -26,8 +26,11 @@ const ipfs = IPFS('127.0.0.1')
 
 const run = async () => {
   try {
-    const orbit = new OrbitDB(ipfs, './orbitdb/benchmarks')
-    const db = await orbit.eventlog('orbit-db.benchmark', { 
+    const orbit = await OrbitDB.createInstance(ipfs, { 
+      directory: './orbitdb/benchmarks/go-ipfs'
+    })
+    const db = await orbit.eventlog('orbit-db.benchmark.go-ipfs', { 
+      create: true,
       replicate: false,
     })
 
