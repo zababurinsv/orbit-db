@@ -104,12 +104,14 @@ Returns a `Promise` that resolves to [a database instance](#store-api). `name` (
 - `replicate` (boolean): Replicate the database with peers, requires IPFS PubSub. (Default: `true`)
 ```javascript
 const db = await orbitdb.create('user.posts', 'eventlog', {
-  write: [
-    // Give access to ourselves
-    orbitdb.identity.publicKey,
-    // Give access to the second peer
-    '042c07044e7ea51a489c02854db5e09f0191690dc59db0afd95328c9db614a2976e088cab7c86d7e48183191258fc59dc699653508ce25bf0369d67f33d5d77839'
-  ]
+  accessController: {  
+    write: [
+      // Give access to ourselves
+      orbitdb.identity.publicKey,
+      // Give access to the second peer
+      '042c07044e7ea51a489c02854db5e09f0191690dc59db0afd95328c9db614a2976e088cab7c86d7e48183191258fc59dc699653508ce25bf0369d67f33d5d77839'
+    ]
+  }
 })
 // db created & opened
 ```
@@ -121,10 +123,11 @@ Returns a `Promise` that resolves to an orbit-db address. The parameters corresp
 
 ```javascript
 const dbAddress = await orbitdb.determineAddress('user.posts', 'eventlog', {
-  write: [
+  accessController: {
+    write: [
     // This could be someone else's public key
     '042c07044e7ea51a489c02854db5e09f0191690dc59db0afd95328c9db614a2976e088cab7c86d7e48183191258fc59dc699653508ce25bf0369d67f33d5d77839'
-  ]
+  ]}
 })
 ```
 
@@ -143,7 +146,7 @@ Returns a `Promise` that resolves to [a database instance](#store-api). `address
 const db = await orbitdb.open('/orbitdb/Qmd8TmZrWASypEp4Er9tgWP4kCNQnW4ncSnvjvyHQ3EVSU/first-database')
 ```
 
-Convienance methods are available when opening/creating any of the default OrbitDB database types: [feed](#orbitdbfeednameaddress), [docs](#orbitdbdocsnameaddress-options), [log](#orbitdblognameaddress), [keyvalue](#orbitdbkeyvaluenameaddress), [counter](#orbitdbcounternameaddress)
+Convenience methods are available when opening/creating any of the default OrbitDB database types: [feed](#orbitdbfeednameaddress), [docs](#orbitdbdocsnameaddress-options), [log](#orbitdblognameaddress), [keyvalue](#orbitdbkeyvaluenameaddress), [counter](#orbitdbcounternameaddress)
 
 You can use: `orbitdb.feed(address, options)`
 
@@ -517,7 +520,7 @@ await db.drop()
 
 Returns an instance of [Identity](https://github.com/orbitdb/orbit-db-identity-provider/src/identity.js). The identity is used to sign the database entries. See the [GUIDE](https://github.com/orbitdb/orbit-db/blob/master/GUIDE.md#identity) for more information on how OrbitDB uses identity.
 
-```
+```javascript
 const identity = db.identity
 console.log(identity.toJSON())
 { id: 'QmZyYjpG6SMJJx2rbye8HXNMufGRtpn9yFkdd27uuq6xrR',
@@ -531,7 +534,7 @@ console.log(identity.toJSON())
 ```
 
 The public key can be retrieved with:
-```
+```javascript
 console.log(db.identity.publicKey)
 // 0446829cbd926ad8e858acdf1988b8d586214a1ca9fa8c7932af1d59f7334d41aa2ec2342ea402e4f3c0195308a4815bea326750de0a63470e711c534932b3131c
 ```
