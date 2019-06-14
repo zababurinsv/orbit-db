@@ -46,6 +46,7 @@
     "localstorage-level-migration": "^0.0.1",
     "markdown-toc": "^1.2.0",
     "mocha": "^5.2.0",
+    "orbit-db-benchmark-runner": "^1.0.0",
     "p-each-series": "^1.0.0",
     "p-map": "^1.2.0",
     "p-map-series": "^1.0.0",
