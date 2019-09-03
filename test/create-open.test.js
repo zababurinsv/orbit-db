@@ -140,6 +140,7 @@ Object.keys(testAPIs).forEach(API => {
           const dir = './orbitdb/tests/another-feed'
           db = await orbitdb.create('third', 'feed', { directory: dir })
           assert.equal(fs.existsSync(dir), true)
+          await db.drop()
         })
 
         it('loads cache from previous version of orbit-db', async() => {
@@ -151,7 +152,6 @@ Object.keys(testAPIs).forEach(API => {
 
           await db.load()
           assert.equal((await db.get('key')), undefined)
-          await db.close()
           await db.drop()
 
           await fs.copy(migrationFixturePath, migrationDataPath)
@@ -176,14 +176,12 @@ Object.keys(testAPIs).forEach(API => {
         describe('Access Controller', function() {
           before(async () => {
             if (db) {
-              await db.close()
               await db.drop()
             }
           })
 
           afterEach(async () => {
             if (db) {
-              await db.close()
               await db.drop()
             }
           })
