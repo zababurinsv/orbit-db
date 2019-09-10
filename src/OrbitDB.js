@@ -49,8 +49,6 @@ class OrbitDB {
     this._directConnections = {}
 
     this.caches = { 'default': options.cache }
-    // flag so that the store class doesn't close it
-    if(this.caches['default']) this.caches['default'].isDefault = true
     this.keystores = { 'default': options.keystore }
     this.stores = {}
 
@@ -161,7 +159,12 @@ class OrbitDB {
       await db.close()
       delete this.stores[db.address.toString()]
     }
-    await this.cache.close()
+
+    const caches = Object.values(this.caches)
+    for (let cache of caches) {
+      await cache.close()
+    }
+    this.caches = []
 
     // Close a direct connection and remove it from internal state
     const removeDirectConnect = e => {
@@ -309,10 +312,7 @@ class OrbitDB {
       if (options.directory) {
         const cacheStorage = await this.storage.createStore(options.directory)
         this.caches[options.directory] = new Cache(cacheStorage)
-        options.cache = new Cache(cacheStorage)
-        if (options.cache._store.db.status !== 'open') {
-          await options.cache._store.open()
-        }
+        options.cache = this.caches[options.directory]
       } else {
         options.cache = this.caches['default']
       }
@@ -371,9 +371,6 @@ class OrbitDB {
     const dbAddress = OrbitDBAddress.parse(address)
 
     options.cache = this.caches[options.directory] || this.caches['default']
-    if (options.cache._store.db.status !== 'open') {
-      await options.cache._store.open()
-    }
 
     // Check if we have the database
     const haveDB = await this._haveLocalData(options.cache, dbAddress)
