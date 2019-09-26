@@ -6,7 +6,7 @@ deps:
 test: deps
 	npm run test:all
 	sudo npm install -g validate-maintainers
-	validate-maintainers orbit-db --match --ci
+	validate-maintainers ipfs --match --ci
 
 build: test
 	mkdir -p examples/browser/lib/
