@@ -2,6 +2,7 @@
 
 const assert = require('assert')
 const rmrf = require('rimraf')
+const path = require('path')
 const DocumentStore = require('orbit-db-docstore')
 const OrbitDB = require('../src/OrbitDB')
 
@@ -13,8 +14,8 @@ const {
   testAPIs,
 } = require('./utils')
 
-const dbPath = './orbitdb/tests/create-open'
-const ipfsPath = './orbitdb/tests/create-open/ipfs'
+const dbPath = path.join('.', 'orbitdb','tests', 'create-type')
+const ipfsPath = path.join('.','orbitdb', 'tests', 'create-type', 'ipfs')
 
 class CustomStore extends DocumentStore {
   constructor (ipfs, id, dbname, options) {
@@ -53,7 +54,7 @@ Object.keys(testAPIs).forEach(API => {
     describe('addDatabaseType', function () {
       it('should have the correct custom type', async () => {
         OrbitDB.addDatabaseType(CustomStore.type, CustomStore)
-        let store = await orbitdb.create(dbPath.replace(/^\.\//, ''), CustomStore.type)
+        let store = await orbitdb.create('custom-type', CustomStore.type)
         assert.equal(store._type, CustomStore.type)
       })
 

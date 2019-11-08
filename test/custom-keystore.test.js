@@ -17,8 +17,8 @@ const {
 
 Identities.addIdentityProvider(CustomTestKeystore().identityProvider)
 
-const dbPath = './orbitdb/tests/customKeystore'
-const ipfsPath = './orbitdb/tests/customKeystore/ipfs'
+const dbPath = path.join('.', 'orbitdb', 'tests', 'customKeystore')
+const ipfsPath = path.join('.', 'orbitdb', 'tests', 'customKeystore', 'ipfs')
 
 Object.keys(testAPIs).forEach(API => {
   describe(`orbit-db - Use a Custom Keystore (${API})`, function() {

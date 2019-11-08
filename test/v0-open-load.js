@@ -27,11 +27,11 @@ const {
   testAPIs,
 } = require('./utils')
 
-const dbPath = './orbitdb/tests/v0'
+const dbPath = path.join('.', 'orbitdb', 'tests', 'v0')
 
-const keyFixtures = './test/fixtures/keys/QmRfPsKJs9YqTot5krRibra4gPwoK4kghhU8iKWxBjGDDX'
-const dbFixturesDir = './test/fixtures/v0/QmWDUfC4zcWJGgc9UHn1X3qQ5KZqBv4KCiCtjnpMmBT8JC/v0-db'
-const ipfsFixturesDir = './test/fixtures/ipfs'
+const keyFixtures = path.join('.', 'test', 'fixtures', 'keys', 'QmRfPsKJs9YqTot5krRibra4gPwoK4kghhU8iKWxBjGDDX')
+const dbFixturesDir = path.join('.', 'test', 'fixtures', 'v0', 'QmWDUfC4zcWJGgc9UHn1X3qQ5KZqBv4KCiCtjnpMmBT8JC', 'v0-db')
+const ipfsFixturesDir = path.join('.', 'test', 'fixtures', 'ipfs')
 
 Object.keys(testAPIs).forEach(API => {
   describe(`orbit-db - Backward-Compatibility - Open & Load (${API})`, function () {
@@ -45,7 +45,7 @@ Object.keys(testAPIs).forEach(API => {
       ipfsd = await startIpfs(API, config.daemon1)
       ipfs = ipfsd.api
       rmrf.sync(dbPath)
-      
+
       const filterFunc = (src, dest) => {
         // windows has problems copying these files...
         return !(src.includes('LOG') || src.includes('LOCK'))

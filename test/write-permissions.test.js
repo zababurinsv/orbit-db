@@ -14,8 +14,8 @@ const {
   databases
 } = require('./utils')
 
-const dbPath = './orbitdb/tests/write-permissions'
-const ipfsPath = './orbitdb/tests/write-permissions/ipfs'
+const dbPath = path.join('.', 'orbitdb', 'tests', 'write-permissions')
+const ipfsPath = path.join('.', 'orbitdb', 'tests', 'write-permissions', 'ipfs')
 
 Object.keys(testAPIs).forEach(API => {
   describe(`orbit-db - Write Permissions (${API})`, function() {

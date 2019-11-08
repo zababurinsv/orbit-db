@@ -4,6 +4,7 @@ const fs = require('fs')
 const assert = require('assert')
 const mapSeries = require('p-map-series')
 const rmrf = require('rimraf')
+const path = require('path')
 const OrbitDB = require('../src/OrbitDB')
 const Identities = require('orbit-db-identity-provider')
 const Keystore = require('orbit-db-keystore')
@@ -18,9 +19,9 @@ const {
   testAPIs,
 } = require('./utils')
 
-const keysPath = './orbitdb/identity/identitykeys'
-const dbPath = './orbitdb/tests/change-identity'
-const ipfsPath = './orbitdb/tests/change-identity/ipfs'
+const keysPath = path.join('.', 'orbitdb', 'identity', 'identitykeys')
+const dbPath = path.join('.', 'orbitdb', 'tests', 'change-identity')
+const ipfsPath = path.join('.', 'orbitdb', 'tests', 'change-identity', 'ipfs')
 
 Object.keys(testAPIs).forEach(API => {
   describe(`orbit-db - Set identities (${API})`, function() {

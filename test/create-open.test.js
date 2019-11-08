@@ -20,10 +20,10 @@ const {
   testAPIs,
 } = require('./utils')
 
-const dbPath = path.join(__dirname, 'orbitdb', 'tests', 'create-open')
-const ipfsPath = path.join(__dirname, 'orbitdb', 'tests', 'create-open', 'ipfs')
-const migrationFixturePath = path.join(__dirname, 'fixtures', 'migration', 'cache-schema-test')
-const ipfsFixturesDir = path.join(__dirname, 'fixtures', 'ipfs')
+const dbPath = path.join('.', 'orbitdb', 'tests', 'create-open')
+const ipfsPath = path.join('.', 'orbitdb', 'tests', 'create-open', 'ipfs')
+const migrationFixturePath = path.join('.', 'test', 'fixtures', 'migration', 'cache-schema-test')
+const ipfsFixturesDir = path.join('.', 'test', 'fixtures', 'ipfs')
 
 Object.keys(testAPIs).forEach(API => {
   describe(`orbit-db - Create & Open (${API})`, function () {
@@ -57,6 +57,8 @@ Object.keys(testAPIs).forEach(API => {
 
       if (ipfsd)
         await stopIpfs(ipfsd)
+
+      rmrf.sync(dbPath)
     })
 
     describe('Create', function () {

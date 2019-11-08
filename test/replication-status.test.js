@@ -18,9 +18,9 @@ const {
   testAPIs,
 } = require('./utils')
 
-const dbPath1 = './orbitdb/tests/create-open/1'
-const dbPath2 = './orbitdb/tests/create-open/2'
-const ipfsPath = './orbitdb/tests/create-open/ipfs'
+const dbPath1 = path.join('.', 'orbitdb', 'tests', 'create-open', '1')
+const dbPath2 = path.join('.', 'orbitdb', 'tests', 'create-open', '2')
+const ipfsPath = path.join('.', 'orbitdb', 'tests', 'create-open', 'ipfs')
 
 Object.keys(testAPIs).forEach(API => {
   describe(`orbit-db - Replication Status (${API})`, function() {

@@ -16,8 +16,8 @@ const {
 
 const last = arr => arr[arr.length - 1]
 
-const dbPath = './orbitdb/tests/eventlog'
-const ipfsPath = './orbitdb/tests/eventlog/ipfs'
+const dbPath = path.join('.', 'orbitdb', 'tests', 'eventlog')
+const ipfsPath = path.join('.', 'orbitdb', 'tests', 'eventlog', 'ipfs')
 
 Object.keys(testAPIs).forEach(API => {
   describe(`orbit-db - Log Database (${API})`, function() {
