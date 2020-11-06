@@ -1,4 +1,5 @@
 version: "3.1"
 services:
   redis:
+    name: Redis Alpine
     image: "redis:alpine"
